@@ -1,0 +1,4 @@
+RESULT = ex02
+SOURCES = jokes.ml
+OCAMLMAKEFILE = OCamlMakefile
+include $(OCAMLMAKEFILE)

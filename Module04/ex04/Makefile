@@ -1,0 +1,4 @@
+RESULT = ex04
+SOURCES = sum.ml
+OCAMLMAKEFILE = OCamlMakefile
+include $(OCAMLMAKEFILE)
