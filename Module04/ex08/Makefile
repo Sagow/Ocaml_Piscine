@@ -1,0 +1,4 @@
+RESULT = ex08
+SOURCES = k_nn.ml
+OCAMLMAKEFILE = OCamlMakefile
+include $(OCAMLMAKEFILE)
