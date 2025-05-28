@@ -36,35 +36,76 @@ object (self)
   inherit reaction s r as super
   method get_start = if self#is_balanced then super#start else failwith "unbalanced reaction"
   method get_result = if self#is_balanced then super#result else failwith "unbalanced reaction"
-  method balance = new alkane_combustion super#start super#result
+  method balance = 
+    let rec test_values (s : (Molecule.molecule * int) list) (r : (Molecule.molecule * int) list) =
+      let tested = new alkane_combustion s r in 
+      if tested#is_balanced then tested
+      else
+        begin
+          let mega_start = self#simplify (List.sort super#hill_sort (self#get_atoms s))
+          and mega_result = self#simplify (List.sort super#hill_sort (self#get_atoms r)) in 
+          (* print_rec mega_start;
+          print_endline "----";
+          print_rec mega_result;
+          print_endline "====="; *)
+          (* too much C *)
+          if snd (List.hd mega_start) < snd (List.hd mega_result) then test_values (self#up_value s 0) r
+          else if snd (List.hd mega_start) > snd (List.hd mega_result) then test_values s (self#up_value r 0)
+          (* too much H *)
+          else if snd (List.nth mega_start 1) < snd (List.nth mega_result 1) then test_values (self#up_value s 0) r
+          else if snd (List.nth mega_start 1) > snd (List.nth mega_result 1) then test_values s (self#up_value r 1)
+          (* too much O *)
+          else if snd (List.nth mega_start 2) < snd (List.nth mega_result 2) then test_values (self#up_value s 1) r
+          else
+            begin
+            print_rec mega_start;
+            print_endline "----";
+            print_rec mega_result;
+            failwith "it should be balanced"
+            end
+        end
+    in
+    test_values super#start super#result
+    (* new alkane_combustion super#start super#result *)
 
-  method is_balanced =
-    let rec get_atoms l =
+  method private up_value l i =
+    let rec loop l i =
       match l with
-      | h::t -> (List.map (fun (a, x) -> (a, x * (snd h))) (fst h)#atoms) @ get_atoms t
+      | h::t -> if i <> 0 then h::(loop t (i - 1)) else (fst h, (snd h) + 1):: (loop t (i - 1))
+      |[] -> []
+    in 
+    loop l i
+
+  method private get_atoms l =
+    let rec get_atoms_rec l =
+      match l with
+      | h::t -> (List.map (fun (a, x) -> (a, x * (snd h))) (fst h)#atoms) @ get_atoms_rec t
       | [] -> []
     in
-    let listStart = List.sort super#hill_sort (get_atoms super#start)
-    and listResult = List.sort super#hill_sort (get_atoms super#result) in
+    get_atoms_rec l
+
+  method private simplify l =
+    let rec loop a count l =
+      match l with
+      | h::t when (fst h)#equals a -> loop a (count + (snd h)) t
+      | h::t -> (a, count):: loop (fst h) (snd h) t
+      | [] when count > 0 -> [(a, count)]
+      | [] -> []
+    in
+    loop (fst (List.hd l)) 0 l
+  
+  method is_balanced =
+    let listStart = List.sort super#hill_sort (self#get_atoms super#start)
+    and listResult = List.sort super#hill_sort (self#get_atoms super#result) in
     (* print_rec listStart;
     print_endline "------";
     print_rec listResult;
     print_endline "======="; *)
-    let simplify l =
-      let rec loop a count l =
-        match l with
-        | h::t when (fst h)#equals a -> loop a (count + (snd h)) t
-        | h::t -> (a, count):: loop (fst h) (snd h) t
-        | [] when count > 0 -> [(a, count)]
-        | [] -> []
-      in
-      loop (fst (List.hd l)) 0 l
-    in
     let listEqual a b =
       if (fst a)#equals (fst b) && (snd a) = (snd b) then true else false
     in
-    let sStart = simplify listStart
-    and sResult = simplify listResult in 
+    let sStart = self#simplify listStart
+    and sResult = self#simplify listResult in 
     (* print_rec sStart;
     print_endline "--------";
     print_rec sResult; *)
