@@ -1,0 +1,4 @@
+RESULT = ex03
+SOURCES = try.ml
+OCAMLMAKEFILE = OCamlMakefile
+include $(OCAMLMAKEFILE)
