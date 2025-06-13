@@ -1,5 +1,5 @@
 # Nom du programme final
-EXEC=ex06
+EXEC=ex07
 
 # Fichiers source
 ML_FILES=ft_is_palindrome.ml test.ml
