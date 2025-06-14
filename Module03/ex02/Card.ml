@@ -207,14 +207,9 @@ let min c1 c2 =
   if (Value.toInt c1.value) > (Value.toInt c2.value) then c2
   else c1
 
-let best list =
-  let rec better_than list c =
-    match list with
-    | h::t -> better_than t (max h c)
-    | [] -> c
-  in
+let best list : Card =
   match list with
-    | h::t -> better_than t h
+    | h::t -> List.fold_left max h t
     | [] -> invalid_arg "Liste vide"
 
 let isOf c color =
