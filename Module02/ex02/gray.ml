@@ -22,9 +22,13 @@ let gray n =
     else s
   in
   let rec printing current length =
-    let bin = getbinary current in
-    if (String.length (getbinary (current + 1)) > length) then xorall bin (decal bin)
-    else (padding (xorall bin (decal bin)) length) ^ " " ^ (printing (current + 1) length)
+    if current > length then ""
+    else
+      begin
+        let bin = getbinary current in
+        if (current >= length) then padding (xorall bin (decal bin)) length
+        else (padding (xorall bin (decal bin)) length) ^ " " ^ (printing (current + 1) length)
+      end
   in
     
   print_endline (printing 0 n)

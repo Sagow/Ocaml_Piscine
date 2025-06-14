@@ -169,5 +169,3 @@ let rec string_of_protein list =
   match list with
   | head::queue -> (translate_aminoacid head) ^ (string_of_protein queue)
   | _ -> ""
-
-let life helix
