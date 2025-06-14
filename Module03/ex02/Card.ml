@@ -207,7 +207,7 @@ let min c1 c2 =
   if (Value.toInt c1.value) > (Value.toInt c2.value) then c2
   else c1
 
-let best list : Card =
+let best list : t =
   match list with
     | h::t -> List.fold_left max h t
     | [] -> invalid_arg "Liste vide"

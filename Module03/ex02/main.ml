@@ -28,7 +28,9 @@ let () =
   print_endline ("Max : " ^ Card.toStringVerbose (Card.max card1 card2) ^ " | Min : " ^ Card.toStringVerbose (Card.min card1 card2));
   Printf.printf "%s and %s\n" (Card.toString card4) (Card.toString card5);
   print_endline ("Max : " ^ Card.toStringVerbose (Card.max card4 card5) ^ " | Min : " ^ Card.toStringVerbose (Card.min card4 card5));
-  print_endline (Card.toStringVerbose (Card.best Card.allClubs) ^ " is the best");
+  print_endline (Card.toStringVerbose (Card.best Card.all) ^ " is the best");
+  try print_endline (Card.toStringVerbose (Card.best []) ^ " is the best")
+  with _ -> print_endline "Raised an exception";
   print_endline (Card.toStringVerbose card1 ^ "is a Spade : " ^ (string_of_bool (Card.isOf card1 Spade)));
   print_endline (Card.toStringVerbose card2 ^ "is a Spade : " ^ (string_of_bool (Card.isOf card2 Spade)));
   print_endline (Card.toStringVerbose card3 ^ "is a Diamond : " ^ (string_of_bool (Card.isDiamond card3)));
